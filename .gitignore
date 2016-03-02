@@ -2,9 +2,13 @@
 settings.production.py
 temp/
 pincodes/migrations/
+pincodes/migrations/*
 catalog/migrations/
+catalog/migrations/*
 orders/migrations/
+orders/migrations/*
 users/migrations/
+users/migrations/*
 migrations/
 db.sqlite3
 .sqlite3
