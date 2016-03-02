@@ -1,11 +1,11 @@
 ## self added ignores
 settings.production.py
 temp/
-apps/pincodes/migrations/*
-apps/catalog/migrations/*
-apps/orders/migrations/*
-apps/users/migrations/*
-/migrations/
+pincodes/migrations/*
+catalog/migrations/*
+orders/migrations/*
+users/migrations/*
+migrations/
 db.sqlite3
 .sqlite3
 
