@@ -15,7 +15,28 @@ Including another URLconf
 """
 from django.conf.urls import url
 from django.contrib import admin
+from django.conf import settings
+from django.conf.urls.static import static
+
+from urlHandlers.login import distributor_login, salesman_login
+from urlHandlers.user_details import retailer_details
+#from urlHandlers.orders import add_new_order
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
+    url(r'^distributor/login$', distributor_login),
+    url(r'^salesman/login$', salesman_login)
 ]
+
+## users related URLs
+urlpatterns += [
+    url(r'^users/retailers/$', retailer_details),
+    url(r'^users/retailers/(\d+)', retailer_details)
+]
+
+## order related
+urlpatterns += [
+    #url(r'newOrder$', add_new_order)
+]
+
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
