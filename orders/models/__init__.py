@@ -1,2 +1,2 @@
-from .orders import *
-from .orderItems import *
+from .order import *
+from .orderItem import *
