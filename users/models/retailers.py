@@ -5,7 +5,7 @@ from pincodes.models import Pincode
 
 class Retailer(models.Model):
 
-    distributors = models.ManyToManyField(Distributor)
+    distributors = models.ForeignKey(Distributor,blank=False,null=False)
 
     company_name = models.CharField(max_length=100, blank=False)
 
@@ -13,7 +13,7 @@ class Retailer(models.Model):
     first_name = models.CharField(max_length=60, blank=True)
     last_name = models.CharField(max_length=60, blank=True)
 
-    mobile_number = models.CharField(max_length=13, unique=True, blank=False, null=False)
+    mobile_number = models.CharField(max_length=13, blank=False, null=False)
 
     profile_picture = models.ImageField(upload_to=None, max_length=200, blank=True, null=False)
 

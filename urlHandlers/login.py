@@ -9,9 +9,9 @@ from scripts.utils import get_token_expiration
 
 import jwt as JsonWebToken
 
+
 @csrf_exempt
 def distributor_login(request):
-
     response = {}
     if request.method == 'POST':
         email = request.POST.get('email', '')
@@ -22,7 +22,7 @@ def distributor_login(request):
             response['error'] = 'Either email or password was empty'
             return JsonResponse(response)
 
-        #if check_token(request)
+        # if check_token(request)
         try:
             distributor = Distributor.objects.get(email=email)
         except Distributor.DoesNotExist:
@@ -30,14 +30,14 @@ def distributor_login(request):
             response['error'] = 'Invalid distributor credentials'
             return JsonResponse(response)
 
-        if check_password(password, distributor.password):
+        if check_password(password,distributor.password):
             tokenPayload = {
                 "user": "distributor",
                 "distributorID": distributor.id,
                 "exp": get_token_expiration()
             }
 
-            encoded = JsonWebToken.encode(tokenPayload, 'secret', algorithm='HS256')
+            encoded = JsonWebToken.encode(tokenPayload, settings.SECRET_KEY, algorithm='HS256')
             response['statusCode'] = '2XX'
             response['token'] = encoded.decode("utf-8")
             return JsonResponse(response)
@@ -50,6 +50,7 @@ def distributor_login(request):
     response['statusCode'] = '4XX'
     response['error'] = 'invalid request'
     return JsonResponse(response)
+
 
 @csrf_exempt
 def salesman_login(request):
@@ -75,7 +76,7 @@ def salesman_login(request):
                 "salesmanID": salesman.id,
                 "exp": get_token_expiration()
             }
-            if check_password(password, salesman.password):
+            if check_password(password,salesman.password):
                 encoded = JsonWebToken.encode(tokenPayload, settings.SECRET_KEY, algorithm='HS256')
                 response["statusCode"] = '2XX'
                 response["token"] = encoded.decode("utf-8")

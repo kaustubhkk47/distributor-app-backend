@@ -6,7 +6,7 @@ def serialize_retailer(retailerItem):
         "company_name": retailerItem.company_name,
         "name": retailerItem.get_full_name(),
         "mobile_number": retailerItem.mobile_number,
-        "profile_picture": retailerItem.profile_picture.url,
+        "profile_picture": retailerItem.profile_picture.url if retailerItem.profile_picture else "",
         "address": retailerItem.get_address(),
         "latitude": retailerItem.latitude,
         "longitude": retailerItem.longitude,

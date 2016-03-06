@@ -29,6 +29,16 @@ def retailer_details(request, retailerID=0):
 def distributor_details(distributorID):
     return customResponse("4XX", {"error": "Invalid request"})
 
+@csrf_exempt
+def salesman_details(request,salesmanID=0):
+    tokenPayload = get_token_payload(request.GET.get("access_token", ""), "distributorID")
 
-def salesman_details(salesmanID):
+    if not len(tokenPayload):
+        return customResponse("4xx", {"error": "Invalid Token"})
+
+    if request.method == "GET":
+        return salesman.get_salesman_details(tokenPayload, salesmanID)
+    elif request.method == "POST":
+        return salesman.post_new_salesman(request, tokenPayload)
+   
     return customResponse("4XX", {"error": "Invalid request"})
