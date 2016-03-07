@@ -34,7 +34,7 @@ def salesman_details(request,salesmanID=0):
     tokenPayload = get_token_payload(request.GET.get("access_token", ""), "distributorID")
 
     if not len(tokenPayload):
-        return customResponse("4xx", {"error": "Invalid Token"})
+        return customResponse("4XX", {"error": "Invalid Token"})
 
     if request.method == "GET":
         return salesman.get_salesman_details(tokenPayload, salesmanID)
