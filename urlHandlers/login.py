@@ -26,7 +26,7 @@ def distributor_login(request):
         except Distributor.DoesNotExist:
             return customResponse("4XX", {"error": "Invalid distributor credentials"})
 
-        if password==distributor.password:
+        if check_password(password, distributor.password):
             tokenPayload = {
                 "user": "distributor",
                 "distributorID": distributor.id,
