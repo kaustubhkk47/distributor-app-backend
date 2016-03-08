@@ -1,4 +1,6 @@
 import time
+from scripts.utils import get_image_url
+
 
 def serialize_retailer(retailerItem):
     retialer = {
@@ -6,7 +8,7 @@ def serialize_retailer(retailerItem):
         "company_name": retailerItem.company_name,
         "name": retailerItem.get_full_name(),
         "mobile_number": retailerItem.mobile_number,
-        "profile_picture": retailerItem.profile_picture.url if retailerItem.profile_picture else "",
+        "profile_picture": get_image_url(retailerItem.profile_picture),
         "address": retailerItem.get_address(),
         "latitude": retailerItem.latitude,
         "longitude": retailerItem.longitude,
@@ -14,6 +16,7 @@ def serialize_retailer(retailerItem):
         "updated_at": time.mktime(retailerItem.updated_at.timetuple())
     }
     return retialer
+
 
 def retailer_parser(retialerQuerySet):
     retailers = []
