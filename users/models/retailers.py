@@ -5,11 +5,11 @@ from pincodes.models import Pincode
 
 class Retailer(models.Model):
 
-    distributors = models.ForeignKey(Distributor,blank=False,null=False)
+    distributors = models.ForeignKey(Distributor,models.SET_NULL,blank=True,null=True)
 
     company_name = models.CharField(max_length=100, blank=False)
 
-    ## contact info for retialer can be added if required
+    ## contact info for retailer can be added if required
     first_name = models.CharField(max_length=60, blank=True)
     last_name = models.CharField(max_length=60, blank=True)
 

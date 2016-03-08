@@ -1,14 +1,6 @@
-from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 
 from users.views import *
-from users.models.distributors import Distributor
-from users.models.salesman import Salesman
-
-
-from users.serializers.distributors import distributor_parser
-from users.serializers.salesman import salesman_parser
-
 
 from scripts.utils import customResponse, get_token_payload
 

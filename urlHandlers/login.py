@@ -1,11 +1,11 @@
 from django.views.decorators.csrf import csrf_exempt
-from django.http import JsonResponse
 from django.contrib.auth.hashers import check_password, make_password
 from django.conf import settings
 
 from users.models.distributors import Distributor
 from users.models.salesman import Salesman
 from scripts.utils import get_token_expiration
+from scripts.utils import customResponse
 
 import jwt as JsonWebToken
 
@@ -18,19 +18,15 @@ def distributor_login(request):
         password = request.POST.get('password', '')
 
         if not email or not password:
-            response['statusCode'] = '4XX'
-            response['error'] = 'Either email or password was empty'
-            return JsonResponse(response)
+            return customResponse("4XX", {"error": "Either email or password was empty"})
 
         # if check_token(request)
         try:
             distributor = Distributor.objects.get(email=email)
         except Distributor.DoesNotExist:
-            response['statusCode'] = '4XX'
-            response['error'] = 'Invalid distributor credentials'
-            return JsonResponse(response)
+            return customResponse("4XX", {"error": "Invalid distributor credentials"})
 
-        if check_password(password,distributor.password):
+        if password==distributor.password:
             tokenPayload = {
                 "user": "distributor",
                 "distributorID": distributor.id,
@@ -38,18 +34,12 @@ def distributor_login(request):
             }
 
             encoded = JsonWebToken.encode(tokenPayload, settings.SECRET_KEY, algorithm='HS256')
-            response['statusCode'] = '2XX'
-            response['token'] = encoded.decode("utf-8")
-            return JsonResponse(response)
+            return customResponse("2XX", {"token": encoded.decode("utf-8")})
 
         else:
-            response['statusCode'] = '4XX'
-            response['error'] = 'Invalid distributor credentials'
-            return JsonResponse(response)
+            return customResponse("4XX", {"error": "Invalid distributor credentials"})
 
-    response['statusCode'] = '4XX'
-    response['error'] = 'invalid request'
-    return JsonResponse(response)
+    return customResponse("4XX", {"error": "Invalid request"})
 
 
 @csrf_exempt
@@ -60,35 +50,23 @@ def salesman_login(request):
         password = request.POST.get('password', '')
 
         if not mobile_number or not password:
-            response["statusCode"] = '4XX'
-            response["error"] = 'Either email or password was empty'
+            return customResponse("4XX", {"error": "Either email or password was empty"})
+        try:
+            salesman = Salesman.objects.get(mobile_number=mobile_number)
+        except Salesman.DoesNotExist:
+            return customResponse("4XX", {"error": "Invalid salesman credentials"})
+
+        tokenPayload = {
+            "user": "salesman",
+            "distributorID": salesman.distributor.id,
+            "salesmanID": salesman.id,
+            "exp": get_token_expiration()
+        }
+        if check_password(password, salesman.password):
+            encoded = JsonWebToken.encode(tokenPayload, settings.SECRET_KEY, algorithm='HS256')
+            return customResponse("2XX", {"token": encoded.decode("utf-8")})
         else:
-            try:
-                salesman = Salesman.objects.get(mobile_number=mobile_number)
-            except Salesman.DoesNotExist:
-                response["statusCode"] = "4XX"
-                response["error"] = "Invalid salesman credentials"
-                return JsonResponse(response)
+            return customResponse("4XX", {"error": "Invalid salesman credentials"})
 
-            tokenPayload = {
-                "user": "salesman",
-                "distributorID": salesman.distributor.id,
-                "salesmanID": salesman.id,
-                "exp": get_token_expiration()
-            }
-            if check_password(password,salesman.password):
-                encoded = JsonWebToken.encode(tokenPayload, settings.SECRET_KEY, algorithm='HS256')
-                response["statusCode"] = '2XX'
-                response["token"] = encoded.decode("utf-8")
-                return JsonResponse(response)
-            else:
-                response["statusCode"] = "4XX"
-                response["error"] = "Invalid salesman credentials"
-                return JsonResponse(response)
-
-            return JsonResponse(response)
-    else:
-        ## request method block
-        response["statusCode"] = "4XX"
-        response["error"] = "Invalid method"
-        return JsonResponse(response)
+    else:  ## request method block
+        return customResponse("4XX",{"error":"Invalid request method"})
