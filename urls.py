@@ -19,7 +19,8 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 from urlHandlers.login import distributor_login, salesman_login
-from urlHandlers.user_details import retailer_details
+from urlHandlers.user_details import retailer_details, salesman_details
+
 #from urlHandlers.orders import add_new_order
 
 urlpatterns = [
@@ -31,7 +32,10 @@ urlpatterns = [
 ## users related URLs
 urlpatterns += [
     url(r'^users/retailers/$', retailer_details),
-    url(r'^users/retailers/(\d+)', retailer_details)
+    url(r'^users/retailers/(\d+)', retailer_details),
+    url(r'^users/salesman/$', salesman_details),
+    url(r'^users/salesman/(\d+)', salesman_details)
+
 ]
 
 ## order related

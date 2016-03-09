@@ -5,15 +5,15 @@ from pincodes.models import Pincode
 
 class Retailer(models.Model):
 
-    distributors = models.ManyToManyField(Distributor)
+    distributors = models.ForeignKey(Distributor,models.SET_NULL,blank=True,null=True)
 
     company_name = models.CharField(max_length=100, blank=False)
 
-    ## contact info for retialer can be added if required
+    ## contact info for retailer can be added if required
     first_name = models.CharField(max_length=60, blank=True)
     last_name = models.CharField(max_length=60, blank=True)
 
-    mobile_number = models.CharField(max_length=13, unique=True, blank=False, null=False)
+    mobile_number = models.CharField(max_length=13, blank=False, null=False)
 
     profile_picture = models.ImageField(upload_to=None, max_length=200, blank=True, null=False)
 

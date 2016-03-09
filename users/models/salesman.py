@@ -2,8 +2,8 @@ from django.db import models
 
 from .distributors import Distributor
 
-class Salesman(models.Model):
 
+class Salesman(models.Model):
     distributor = models.ForeignKey(Distributor, models.SET_NULL, blank=True, null=True)
 
     first_name = models.CharField(max_length=60, blank=False)
@@ -14,8 +14,13 @@ class Salesman(models.Model):
 
     profile_picture = models.ImageField(upload_to=None, max_length=200, blank=True, null=False)
 
+    account_active = models.BooleanField(default=1)
+
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return self.first_name + ' ' + self.last_name
+
+    def get_full_name(self):
+        return self.first_name + self.last_name
