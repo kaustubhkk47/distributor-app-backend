@@ -7,7 +7,7 @@ def serialize_salesman(salesmanData):
         "salesmanID": salesmanData.id,
         "name": salesmanData.get_full_name(),
         "mobile_number": salesmanData.mobile_number,
-        "profile_picture": get_image_url(salesmanData.profile_picture).url,
+        "profile_picture": get_image_url(salesmanData.profile_picture),
         "created_at": time.mktime(salesmanData.created_at.timetuple()),
         "updated_at": time.mktime(salesmanData.updated_at.timetuple())
 
