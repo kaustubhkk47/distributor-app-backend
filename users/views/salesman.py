@@ -1,5 +1,7 @@
 from django.views.decorators.csrf import csrf_exempt
 
+from django.contrib.auth.hashers import make_password
+
 from ..models.salesman import Salesman
 
 from ..models.distributors import Distributor
@@ -41,7 +43,7 @@ def post_new_salesman(request, tokenPayload):
         # no need to validate, will raise a exception if empty
         firstName = request.POST.get('first_name')
         lastName = request.POST.get('last_name', '')
-        password = request.POST.get('password')
+        password = make_password(request.POST.get('password'))
 
         profilePicture = request.FILES.get('profile_picture', '')
         if not profilePicture == '' and not check_valid_image(profilePicture.name):
