@@ -56,6 +56,6 @@ def check_valid_image(image):
         return True
     description = image.split('.')
     extension = str(description[-1]).lower()
-    if extension in ["jpeg", "png", "gif", "bmp"]:
+    if extension in ["jpg", "jpeg", "png", "gif", "bmp"]:
         return True
     return False
