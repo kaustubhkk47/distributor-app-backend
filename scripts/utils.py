@@ -28,7 +28,7 @@ def get_token_payload(access_token, userID):
 
 
 def get_token_expiration():
-    return datetime.datetime.now() + datetime.timedelta(seconds=3600)
+    return datetime.datetime.now() + datetime.timedelta(seconds=36000)
 
 
 def customResponse(statusCode, body):
@@ -59,3 +59,10 @@ def check_valid_image(image):
     if extension in ["jpg", "jpeg", "png", "gif", "bmp"]:
         return True
     return False
+
+def check_pin_code_validity(pincode):
+    if not pincode:
+        return False
+    elif len(str(pincode)) != 6:
+        return False
+    return True
