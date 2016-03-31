@@ -20,8 +20,7 @@ def convert_keys_to_string(dictionary):
         for k, v in dictionary.items())
 
 def validateRetailerData(retailer):
-    print "validate"
-    print retailer
+    
     if not "mobile_number" in retailer or not check_mobile_number(retailer["mobile_number"]):
         return False
     if not 'company_name' in retailer or not 'name' in retailer or not 'address_line_1' in retailer:

@@ -20,7 +20,7 @@ from django.conf.urls.static import static
 
 from urlHandlers.login import distributor_login, salesman_login
 from urlHandlers.user_details import retailer_details, salesman_details
-
+from urlHandlers.offer_details import get_offers
 #from urlHandlers.orders import add_new_order
 
 urlpatterns = [
@@ -38,6 +38,10 @@ urlpatterns += [
 
 ]
 
+## catalog related
+urlpatterns += [
+    url(r'^offers/$', get_offers)
+]
 ## order related
 urlpatterns += [
     #url(r'newOrder$', add_new_order)

@@ -1,10 +1,10 @@
 from django.db import models
 
-from .products import Product
+from users.models.distributors import Distributor
 
 class Offer(models.Model):
 
-    product = models.ForeignKey(Product, models.SET_NULL, blank=True, null=True)
+    distributor = models.ForeignKey(Distributor, models.SET_NULL, blank=True, null=True)
 
     title = models.CharField(max_length=200, blank=True, null=False)
     offer_status = models.BooleanField(default=True)
