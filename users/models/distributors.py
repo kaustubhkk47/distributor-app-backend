@@ -4,8 +4,7 @@ from pincodes.models import Pincode
 
 class Distributor(models.Model):
 
-    first_name = models.CharField(max_length=60, blank=False)
-    last_name = models.CharField(max_length=60, blank=True)
+    name = models.CharField(max_length=120, blank=False)
 
     email = models.EmailField(max_length=254, unique=True, blank=False, null=False)
     mobile_number = models.CharField(max_length=13, unique=True, blank=False, null=False)
