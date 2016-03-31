@@ -5,7 +5,7 @@ from scripts.utils import get_image_url
 def serialize_salesman(salesmanData):
     salesman = {
         "salesmanID": salesmanData.id,
-        "name": salesmanData.get_full_name(),
+        "name": salesmanData.name,
         "mobile_number": salesmanData.mobile_number,
         "profile_picture": get_image_url(salesmanData.profile_picture),
         "created_at": time.mktime(salesmanData.created_at.timetuple()),

@@ -6,8 +6,7 @@ from .distributors import Distributor
 class Salesman(models.Model):
     distributor = models.ForeignKey(Distributor, models.SET_NULL, blank=True, null=True)
 
-    first_name = models.CharField(max_length=60, blank=False)
-    last_name = models.CharField(max_length=60, blank=True)
+    name = models.CharField(max_length=120, blank=False)
 
     mobile_number = models.CharField(max_length=13, unique=True, blank=False, null=False)
     password = models.CharField(max_length=128, blank=False, null=False)
@@ -21,6 +20,3 @@ class Salesman(models.Model):
 
     def __str__(self):
         return self.first_name + ' ' + self.last_name
-
-    def get_full_name(self):
-        return self.first_name + self.last_name

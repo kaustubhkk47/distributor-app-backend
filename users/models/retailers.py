@@ -10,8 +10,7 @@ class Retailer(models.Model):
     company_name = models.CharField(max_length=100, blank=False)
 
     ## contact info for retailer can be added if required
-    first_name = models.CharField(max_length=60, blank=True)
-    last_name = models.CharField(max_length=60, blank=True)
+    name = models.CharField(max_length=120, blank=True)
 
     mobile_number = models.CharField(max_length=13, blank=False, null=False)
 
@@ -32,9 +31,6 @@ class Retailer(models.Model):
 
     def __str__(self):
         return self.company_name
-
-    def get_full_name(self):
-        return self.first_name + self.last_name
 
     def get_address(self):
         address = self.address_line_1
