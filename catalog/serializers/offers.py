@@ -1,6 +1,6 @@
 import time
 
-def serialize_retailer(offerItem):
+def serialize_offer(offerItem):
     offer = {
         "offerID": offerItem.id,
         "distributorID": offerItem.distributor_id,
@@ -16,6 +16,6 @@ def offers_parser(offerQuerySet):
     offers = []
 
     for i in range(len(offerQuerySet)):
-        offers.append(serialize_retailer(offerQuerySet[i]))
+        offers.append(serialize_offer(offerQuerySet[i]))
 
     return offers
