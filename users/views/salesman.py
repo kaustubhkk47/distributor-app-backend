@@ -10,8 +10,6 @@ from ..serializers.salesman import salesman_parser
 
 from scripts.utils import customResponse,check_mobile_number,check_valid_image
 
-
-
 def get_salesman_details(tokenPayload, salesmanID=0):
     distributorID = tokenPayload["distributorID"]
 
