@@ -9,4 +9,4 @@ def get_product_details(request, tokenPayload):
 
     products = Product.objects.filter(distributor__id=distributorID)
 
-    return customResponse("4XX", {"products": products_parser(products)})
+    return customResponse("2XX", {"products": products_parser(products)})
