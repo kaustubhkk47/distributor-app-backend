@@ -14,8 +14,35 @@ import json
 def get_orders_details(request, tokenPayload):
     distributorID = tokenPayload['distributorID']
 
-    orders = OrderItem.objects.filter(order__distributor__id=distributorID).select_related()
-    return customResponse("2XX", {"orders": order_parser(orders)})
+    orders = []
+    ordersPtr = Order.objects.filter(distributor__id=distributorID).select_related()
+    for i in range(len(ordersPtr)):
+        print ordersPtr[i].retailer_id
+        order = {
+            "orderID": ordersPtr[i].id,
+            "distributorID": ordersPtr[i].distributor_id,
+            "retailer": {
+                "retailerID": ordersPtr[i].retailer_id,
+                "company_name": ordersPtr[i].retailer.company_name
+            },
+            "salesman": {
+                "salesmanID": ordersPtr[i].salesman_id,
+                "name": ordersPtr[i].salesman.name
+            },
+            "productCount": ordersPtr[i].productCount,
+            "totalPrice": ordersPtr[i].totalPrice,
+            "editedPrice": ordersPtr[i].editedPrice,
+            "created_at": ordersPtr[i].created_at,
+            "updated_at": ordersPtr[i].updated_at
+        }
+        # orderItemPtr = OrderItem.objects.filter(order__id=ordersPtr[i].id)
+        # products = []
+        # for j in range(len(orderItemPtr)):
+        #     product = {
+        #         "productID": orderItemPtr[j].product_id
+        #     }
+        orders.append(order)
+    return customResponse("2XX", {"orders": orders})
 
 @csrf_exempt
 def post_order_details(request, tokenPayload):
