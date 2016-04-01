@@ -8,19 +8,13 @@ from pincodes.models import Pincode
 
 from ..serializers.retailers import retailer_parser
 
-from scripts.utils import customResponse, check_mobile_number, check_valid_image, check_pin_code_validity
+from scripts.utils import customResponse, check_mobile_number, check_valid_image, check_pin_code_validity, convert_keys_to_string
 
 import json
 
-def convert_keys_to_string(dictionary):
-    """Recursively converts dictionary keys to strings."""
-    if not isinstance(dictionary, dict):
-        return dictionary
-    return dict((str(k), convert_keys_to_string(v))
-        for k, v in dictionary.items())
 
 def validateRetailerData(retailer):
-    
+
     if not "mobile_number" in retailer or not check_mobile_number(retailer["mobile_number"]):
         return False
     if not 'company_name' in retailer or not 'name' in retailer or not 'address_line_1' in retailer:
@@ -69,12 +63,12 @@ def post_new_retailer(request, tokenPayload):
         return customResponse("4XX", {"error": "Retailer already exist"})
 
     try:
-        pincode = Pincode.objects.get(pincode=retailer['pincode'])
+        #pincode = Pincode.objects.get(pincode=retailer['pincode'])
         newRetailer = Retailer.objects.create(mobile_number=retailer['mobile_number'], company_name=retailer['company_name'], name=retailer['name'],
                                               address_line_1=retailer['address_line_1'],
                                               address_line_2=retailer['address_line_2'], landmark=retailer['landmark'],
                                               latitude=retailer['latitude'], longitude=retailer['longitude'],
-                                              pincode=pincode, distributors_id=distributorID)
+                                              pincode=retailer['pincode'], distributors_id=distributorID)
     except Exception as e:
         return customResponse("4XX", {"error": "unable to create entry in db"})
     else:
@@ -103,7 +97,7 @@ def update_retailer(request, tokenPayload):
         retailer['longitude'] = retailerPtr.longitude
 
     try:
-        pincode = Pincode.objects.get(pincode=retailer['pincode'])
+        #pincode = Pincode.objects.get(pincode=retailer['pincode'])
 
         retailerPtr.mobile_number = retailer['mobile_number']
         retailerPtr.company_name = retailer['company_name']
@@ -111,18 +105,19 @@ def update_retailer(request, tokenPayload):
         retailerPtr.address_line_1 = retailer['address_line_1']
         retailerPtr.address_line_2 = retailer['address_line_2']
         retailerPtr.landmark = retailer['landmark']
-        retailerPtr.pincode = pincode
+        retailerPtr.pincode = retailer['pincode']
         retailerPtr.latitude = retailer['latitude']
         retailerPtr.longitude = retailer['longitude']
 
         retailerPtr.save()
 
         print retailerPtr
-        return customResponse("2XX", {"retailer": retailer_parser([retailerPtr])})
 
     except Exception as e:
         print e
         return customResponse("4XX", {"error": "could not update"})
+    else:
+        return customResponse("2XX", {"retailer": retailer_parser([retailerPtr])})
 
 @csrf_exempt
 def delete_retailer(request, tokenPayload):

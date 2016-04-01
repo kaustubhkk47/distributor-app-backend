@@ -19,7 +19,7 @@ def retailer_details(request, retailerID=0):
         return retailers.update_retailer(request, tokenPayload)
     elif request.method == "DELETE":
         return retailers.delete_retailer(request, tokenPayload)
-        
+
     return customResponse("4XX", {"error": "Invalid request"})
 
 def distributor_details(distributorID):
@@ -36,5 +36,9 @@ def salesman_details(request,salesmanID=0):
         return salesman.get_salesman_details(tokenPayload, salesmanID)
     elif request.method == "POST":
         return salesman.post_new_salesman(request, tokenPayload)
-
+    elif request.method == "PUT":
+        return salesman.update_salesman(request, tokenPayload)
+    elif request.method == "DELETE":
+        return salesman.delete_salesman(request, tokenPayload)
+        
     return customResponse("4XX", {"error": "Invalid request"})

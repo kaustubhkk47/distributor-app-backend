@@ -11,9 +11,7 @@ class Order(models.Model):
     salesman = models.ForeignKey(Salesman, models.SET_NULL, blank=True, null=True)
     retailer = models.ForeignKey(Retailer, models.SET_NULL, blank=True, null=True)
     totalPrice = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    editedPrice = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-
-    def __str__(self):
-        return self.distributor.get_full_name()
