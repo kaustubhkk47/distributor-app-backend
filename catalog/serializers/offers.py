@@ -6,8 +6,10 @@ def serialize_offer(offerItem):
         "distributorID": offerItem.distributor_id,
         "title": offerItem.title,
         "offer_status": offerItem.offer_status,
-        "created_at": time.mktime(offerItem.created_at.timetuple()),
+        #"created_at": time.mktime(offerItem.created_at.timetuple()),
+        "created_at": offerItem.created_at,
         "updated_at": time.mktime(offerItem.updated_at.timetuple())
+        #"updated_at": offerItem.updated_at
     }
     return offer
 

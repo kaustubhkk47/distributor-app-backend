@@ -21,7 +21,7 @@ from django.conf.urls.static import static
 from urlHandlers.login import distributor_login, salesman_login
 from urlHandlers.user_details import retailer_details, salesman_details
 from urlHandlers.catalog_details import get_offers, get_products
-from urlHandlers.order_details import get_orders
+from urlHandlers.order_details import order_details
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
@@ -43,10 +43,10 @@ urlpatterns += [
     url(r'^offers/$', get_offers),
     url(r'^products/$', get_products)
 ]
+
 ## order related
 urlpatterns += [
-    #url(r'newOrder$', add_new_order)
-    url(r'^orders/$', get_orders)
+    url(r'^orders/$', order_details)
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
