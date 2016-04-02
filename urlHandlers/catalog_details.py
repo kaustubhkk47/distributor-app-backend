@@ -5,6 +5,7 @@ from catalog.views.products import *
 
 from scripts.utils import customResponse, get_token_payload
 
+@csrf_exempt
 def get_offers(request):
     tokenPayload = get_token_payload(request.GET.get("access_token", ""), "distributorID")
 
@@ -13,6 +14,12 @@ def get_offers(request):
 
     if request.method == "GET":
         return get_offer_details(request, tokenPayload)
+    elif request.method == "POST":
+        return add_new_offer(request, tokenPayload)
+    elif request.method == "DELETE":
+        return delete_offer(request, tokenPayload)
+    elif request.method == "PUT":
+        return update_offer(request, tokenPayload)
     else:
         return customResponse("4XX", {"error": "invalid method"})
 

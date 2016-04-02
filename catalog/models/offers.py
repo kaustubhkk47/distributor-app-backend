@@ -6,7 +6,7 @@ class Offer(models.Model):
 
     distributor = models.ForeignKey(Distributor, models.SET_NULL, blank=True, null=True)
 
-    title = models.CharField(max_length=200, blank=True, null=False)
+    title = models.CharField(max_length=200, blank=False, null=False)
     offer_status = models.BooleanField(default=True)
 
     created_at = models.DateTimeField(auto_now_add=True)
