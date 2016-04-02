@@ -35,12 +35,18 @@ def get_orders_details(request, tokenPayload):
             "created_at": ordersPtr[i].created_at,
             "updated_at": ordersPtr[i].updated_at
         }
-        # orderItemPtr = OrderItem.objects.filter(order__id=ordersPtr[i].id)
-        # products = []
-        # for j in range(len(orderItemPtr)):
-        #     product = {
-        #         "productID": orderItemPtr[j].product_id
-        #     }
+        orderItemPtr = OrderItem.objects.filter(order__id=ordersPtr[i].id)
+        products = []
+        for j in range(len(orderItemPtr)):
+            product = {
+                "productID": orderItemPtr[j].product_id,
+                "name": orderItemPtr[j].product.name if orderItemPtr[j].product else "",
+                "quantity": orderItemPtr[j].quantity,
+                "price_per_unit": orderItemPtr[j].product.price_per_unit if orderItemPtr[j].product else ""
+            }
+            products.append(product)
+        order["products"] = products
+
         orders.append(order)
     return customResponse("2XX", {"orders": orders})
 
