@@ -49,7 +49,8 @@ INSTALLED_APPS += [
     'users',
     'pincodes',
     'catalog',
-    'orders'
+    'orders',
+    'tracking'
 ]
 
 MIDDLEWARE_CLASSES = [

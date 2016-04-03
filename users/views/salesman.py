@@ -1,7 +1,5 @@
 from django.views.decorators.csrf import csrf_exempt
 
-from django.contrib.auth.hashers import make_password
-
 from ..models.salesman import Salesman
 
 from ..models.distributors import Distributor

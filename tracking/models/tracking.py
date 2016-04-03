@@ -1,10 +1,8 @@
-
-from django.db import Models
+from django.db import models
 
 from users.models.salesman import Salesman
 
-class Tacking(models.Model):
-
+class Tracking(models.Model):
     salesman = models.ForeignKey(Salesman)
     latlngs = models.TextField()
 

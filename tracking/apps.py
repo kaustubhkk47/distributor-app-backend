@@ -3,5 +3,5 @@ from __future__ import unicode_literals
 from django.apps import AppConfig
 
 
-class TackingConfig(AppConfig):
-    name = 'tacking'
+class TrackingConfig(AppConfig):
+    name = 'tracking'

@@ -22,6 +22,7 @@ from urlHandlers.login import distributor_login, salesman_login
 from urlHandlers.user_details import retailer_details, salesman_details
 from urlHandlers.catalog_details import get_offers, get_products
 from urlHandlers.order_details import order_details
+from urlHandlers.tracking_details import tracking_details
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
@@ -47,6 +48,11 @@ urlpatterns += [
 ## order related
 urlpatterns += [
     url(r'^orders/$', order_details)
+]
+
+##tracking
+urlpatterns += [
+    url(r'^tracking/$', tracking_details)
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
