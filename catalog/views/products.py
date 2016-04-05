@@ -4,7 +4,7 @@ from ..models.products import Product
 
 from ..serializers.products import products_parser
 
-from scripts.utils import customResponse, convert_keys_to_string
+from scripts.utils import customResponse, convert_keys_to_string, closeDBConnection
 
 import json
 
