@@ -21,16 +21,22 @@ def get_orders_details(request, tokenPayload):
         order = {
             "orderID": ordersPtr[i].id,
             "distributorID": ordersPtr[i].distributor_id,
-            "retailer": {
-                "retailerID": ordersPtr[i].retailer_id,
-                "company_name": ordersPtr[i].retailer.company_name
-            },
             "productCount": ordersPtr[i].productCount,
             "totalPrice": ordersPtr[i].totalPrice,
             "editedPrice": ordersPtr[i].editedPrice,
             "created_at": time.mktime(ordersPtr[i].created_at.timetuple())*1000,
             "updated_at": time.mktime(ordersPtr[i].updated_at.timetuple())*1000
         }
+        if ordersPtr[i].retailer_id:
+            "retailer": {
+                "retailerID": ordersPtr[i].retailer_id,
+                "company_name": ordersPtr[i].retailer.company_name
+            }
+        else:
+            "retailer": {
+                "retailerID": None,
+                "company_name": None
+            },
         if ordersPtr[i].salesman_id:
             order["salesman"] = {
                 "salesmanID": ordersPtr[i].salesman_id,
