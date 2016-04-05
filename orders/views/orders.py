@@ -28,12 +28,12 @@ def get_orders_details(request, tokenPayload):
             "updated_at": time.mktime(ordersPtr[i].updated_at.timetuple())*1000
         }
         if ordersPtr[i].retailer_id:
-            "retailer": {
+            order["retailer"]= {
                 "retailerID": ordersPtr[i].retailer_id,
                 "company_name": ordersPtr[i].retailer.company_name
             }
         else:
-            "retailer": {
+            order["retailer"]= {
                 "retailerID": None,
                 "company_name": None
             },
