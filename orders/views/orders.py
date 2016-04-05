@@ -15,7 +15,7 @@ def get_orders_details(request, tokenPayload):
     distributorID = tokenPayload['distributorID']
 
     orders = []
-    ordersPtr = Order.objects.filter(distributor__id=distributorID).select_related()
+    ordersPtr = Order.objects.filter(distributor__id=distributorID, salesman__isnull=False).select_related()
     for i in range(len(ordersPtr)):
         print ordersPtr[i].retailer_id
         order = {

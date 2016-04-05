@@ -55,7 +55,7 @@ def post_new_retailer(request, tokenPayload):
         retailer = convert_keys_to_string(retailer)
     except Exception as e:
         return customResponse("4XX", {"error": "Invliad data sent in request"})
-
+    print retailer
     if not len(retailer) or not validateRetailerData(retailer):
         return customResponse("4XX", {"error": "Invaild data for retailer sent"})
 
