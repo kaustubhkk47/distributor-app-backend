@@ -12,7 +12,7 @@ def get_product_details(request, tokenPayload):
     distributorID = tokenPayload['distributorID']
 
     products = Product.objects.filter(distributor__id=distributorID)
-
+    closeDBConnection()
     return customResponse("2XX", {"products": products_parser(products)})
 
 @csrf_exempt
@@ -40,8 +40,10 @@ def post_new_product(request, tokenPayload):
         newProduct = Product.objects.create(distributor_id=distributorID, name=product['name'], price_per_unit=product['price_per_unit'])
     except Exception as e:
         print e
+        closeDBConnection()
         return customResponse("4XX", {"error": "unable to create entry in db"})
     else:
+        closeDBConnection()
         return customResponse("2XX", {"product": products_parser([newProduct])})
 
 @csrf_exempt
@@ -71,8 +73,10 @@ def update_product_details(request, tokenPayload):
 
     except Exception as e:
         print e
+        closeDBConnection()
         return customResponse("4XX", {"error": "could not update"})
     else:
+        closeDBConnection()
         return customResponse("2XX", {"product": products_parser([productPtr])})
 
 @csrf_exempt
@@ -81,7 +85,6 @@ def delete_product(request, tokenPayload):
 
     try:
         product = json.loads(request.body.decode("utf-8"))
-        print product
         product = convert_keys_to_string(product)
     except Exception as e:
         return customResponse("4XX", {"error": "Invliad data sent in request"})
@@ -93,11 +96,12 @@ def delete_product(request, tokenPayload):
     try:
         productPtr = Product.objects.get(id=int(product["productID"]))
     except Product.DoesNotExist:
+        closeDBConnection()
         return customResponse("4XX", {"error": "No such product exists"})
 
     if productPtr.distributor_id != distributorID:
         return customResponse("4XX", {"error": "different distributors"})
 
     productPtr.delete()
-
+    closeDBConnection()
     return customResponse("2XX", {"retailer": products_parser([productPtr])})

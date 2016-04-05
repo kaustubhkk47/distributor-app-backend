@@ -1,7 +1,7 @@
 from django.views.decorators.csrf import csrf_exempt
 import json
 
-from scripts.utils import customResponse, convert_keys_to_string
+from scripts.utils import customResponse, convert_keys_to_string, closeDBConnection
 
 from ..models.tracking import Tracking
 
@@ -25,7 +25,7 @@ def get_tracking_details(request, tokenPayload):
     else:
         tracking = Tracking.objects.filter(salesman__distributor__id=distributorID)
 
-
+    closeDBConnection()
     return customResponse("2XX", {"tracking": json_response(tracking)})
 
 @csrf_exempt
@@ -52,7 +52,9 @@ def post_new_tracking_details(request, tokenPayload):
         newTracking = Tracking.objects.create(salesman_id=salesmanID, latlngs=json.dumps(tracking['latlngs']))
     except Exception as e:
         print e
+        closeDBConnection()
         return customResponse("4XX", {"error": "unable to create entry in db"})
 
     print newTracking
+    closeDBConnection()
     return customResponse("2XX", {"tracking": json_response([newTracking])})

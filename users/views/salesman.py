@@ -6,7 +6,7 @@ from ..models.distributors import Distributor
 
 from ..serializers.salesman import salesman_parser
 
-from scripts.utils import customResponse, check_mobile_number, check_valid_image, convert_keys_to_string
+from scripts.utils import customResponse, check_mobile_number, check_valid_image, convert_keys_to_string, closeDBConnection
 
 import json
 
@@ -20,6 +20,7 @@ def get_salesman_details(tokenPayload, salesmanID=0):
             salesmen = [salesmen]
         else:
             salesmen = Salesman.objects.filter(distributor__id=distributorID, account_active=True)
+            closeDBConnection()
     except Exception as e:
         return customResponse("4XX", {"error": "No Salesman Found"})
 
@@ -47,6 +48,7 @@ def post_new_salesman(request, tokenPayload):
         newSalesman = Salesman.objects.create(distributor_id=distributorID, mobile_number=salesman['mobile_number'], name=salesman['name'], password=salesman['password'])
     except Exception as e:
         print e
+        closeDBConnection()
         return customResponse("4XX", {"error": "unable to create entry in db"})
 
     return customResponse("2XX", {"salesmen": salesman_parser([newSalesman])})
@@ -81,8 +83,10 @@ def update_salesman(request, tokenPayload):
 
     except Exception as e:
         print e
+        closeDBConnection()
         return customResponse("4XX", {"error": "could not update"})
     else:
+        closeDBConnection()
         return customResponse("2XX", {"retailer": salesman_parser([salesmanPtr])})
 
 @csrf_exempt
@@ -102,11 +106,12 @@ def delete_salesman(request, tokenPayload):
     try:
         salesmanPtr = Salesman.objects.get(id=int(salesman["salesmanID"]))
     except Salesman.DoesNotExist:
+        closeDBConnection()
         return customResponse("4XX", {"error": "No such retailer exists"})
 
     if salesmanPtr.distributor_id != distributorID:
         return customResponse("4XX", {"error": "different distributor"})
 
     salesmanPtr.delete()
-
+    closeDBConnection()
     return customResponse("2XX", {"retailer": salesman_parser([salesmanPtr])})

@@ -3,7 +3,7 @@ from ..models.offers import Offer
 
 from ..serializers.offers import offers_parser
 
-from scripts.utils import customResponse, convert_keys_to_string
+from scripts.utils import customResponse, convert_keys_to_string, closeDBConnection
 import json
 
 def get_offer_details(request, tokenPayload):
@@ -11,6 +11,7 @@ def get_offer_details(request, tokenPayload):
 
     offers = Offer.objects.filter(distributor__id=distributorID)
 
+    closeDBConnection()
     return customResponse("2XX", {"offers": offers_parser(offers)})
 
 @csrf_exempt
@@ -30,8 +31,10 @@ def add_new_offer(request, tokenPayload):
         newOffer = Offer.objects.create(distributor_id=distributorID, title=offer['title'])
 
     except Exception as e:
+        closeDBConnection()
         return customResponse("4XX", {"error": "unable to create entry in db"})
-    print newOffer
+
+    closeDBConnection()
     return customResponse("2XX", {"offers": offers_parser([newOffer])})
 
 @csrf_exempt
@@ -50,12 +53,14 @@ def delete_offer(request, tokenPayload):
     try:
         offerPtr = Offer.objects.get(id=int(offer["offerID"]))
     except Offer.DoesNotExist:
+        closeDBConnection()
         return customResponse("4XX", {"error": "No such Offer exists"})
 
     if offerPtr.distributor_id != distributorID:
         return customResponse("4XX", {"error": "different distributor"})
 
     offerPtr.delete()
+    closeDBConnection()
     return customResponse("2XX", {"offers": offers_parser([offerPtr])})
 
 @csrf_exempt
@@ -73,6 +78,7 @@ def update_offer(request, tokenPayload):
 
     offerPtr = Offer.objects.filter(id=offer["offerID"], distributor__id=distributorID)
     if len(offerPtr) == 0:
+        closeDBConnection()
         return customResponse("4XX", {"error": "No such offer exists"})
 
     offerPtr = offerPtr[0]
@@ -80,8 +86,9 @@ def update_offer(request, tokenPayload):
     try:
         offerPtr.title = offer['title']
         offerPtr.save()
-
+        closeDBConnection()
     except Exception as e:
+        closeDBConnection()
         return customResponse("4XX", {"error": "could not update"})
     else:
         return customResponse("2XX", {"offer": offers_parser([offerPtr])})

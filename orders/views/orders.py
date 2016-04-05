@@ -7,7 +7,7 @@ from users.models.distributors import Distributor
 from pincodes.models import Pincode
 
 from ..serializers.orders import order_parser
-from scripts.utils import customResponse, convert_keys_to_string
+from scripts.utils import customResponse, convert_keys_to_string, closeDBConnection
 
 import json
 
@@ -55,6 +55,7 @@ def get_orders_details(request, tokenPayload):
         order["products"] = products
 
         orders.append(order)
+    closeDBConnection()
     return customResponse("2XX", {"orders": orders})
 
 @csrf_exempt
@@ -93,6 +94,7 @@ def post_order_details(request, tokenPayload):
             orderPtr = Order.objects.create(distributor_id=distributorID, salesman_id=salesmanID, retailer_id=retailerID, totalPrice=totalPrice, editedPrice=editedPrice, productCount=productCount)
         except Exception as e:
             print e
+            closeDBConnection()
             return customResponse("4XX", {"error": "unable to create order entry"})
 
         responseOrderIDs.append(orderPtr.id)
@@ -111,4 +113,5 @@ def post_order_details(request, tokenPayload):
                 print e
                 return customResponse("4XX", {"error": products[i]})
         #orderItems = OrderItem.objects.bulk_create(orderItemEntries)
+    closeDBConnection()
     return customResponse("2XX", {"orderIDs":responseOrderIDs})

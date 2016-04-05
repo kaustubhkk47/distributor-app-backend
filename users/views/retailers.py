@@ -8,7 +8,7 @@ from pincodes.models import Pincode
 
 from ..serializers.retailers import retailer_parser
 
-from scripts.utils import customResponse, check_mobile_number, check_valid_image, check_pin_code_validity, convert_keys_to_string
+from scripts.utils import customResponse, check_mobile_number, check_valid_image, check_pin_code_validity, convert_keys_to_string, closeDBConnection
 
 import json
 
@@ -39,6 +39,7 @@ def get_retailer_details(tokenPayload, retailerID=0):
             retailers = [retailers]
         else:
             retailers = Retailer.objects.filter(distributors__id=distributorID, account_active=True)
+            closeDBConnection()
     except Exception as e:
         return customResponse("4XX", {"error": "Invalid Retailer"})
 
@@ -70,8 +71,10 @@ def post_new_retailer(request, tokenPayload):
                                               latitude=retailer['latitude'], longitude=retailer['longitude'],
                                               pincode=retailer['pincode'], distributors_id=distributorID)
     except Exception as e:
+        closeDBConnection()
         return customResponse("4XX", {"error": "unable to create entry in db"})
     else:
+        closeDBConnection()
         return customResponse("2XX", {"retailer": retailer_parser([newRetailer])})
 
 @csrf_exempt
@@ -115,8 +118,10 @@ def update_retailer(request, tokenPayload):
 
     except Exception as e:
         print e
+        closeDBConnection()
         return customResponse("4XX", {"error": "could not update"})
     else:
+        closeDBConnection()
         return customResponse("2XX", {"retailer": retailer_parser([retailerPtr])})
 
 @csrf_exempt
@@ -136,11 +141,12 @@ def delete_retailer(request, tokenPayload):
     try:
         retailerPtr = Retailer.objects.get(id=int(retailer["retailerID"]))
     except Retailer.DoesNotExist:
+        closeDBConnection()
         return customResponse("4XX", {"error": "No such retailer exists"})
 
     if retailerPtr.distributors_id != distributorID:
         return customResponse("4XX", {"error": "different distributors"})
 
     retailerPtr.delete()
-
+    closeDBConnection()
     return customResponse("2XX", {"retailer": retailer_parser([retailerPtr])})

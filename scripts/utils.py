@@ -1,9 +1,12 @@
 from django.conf import settings
 from django.http import JsonResponse
+from django.db import connection
 
 import jwt as JsonWebToken
 import datetime
 
+def closeDBConnection():
+    connection.close():
 
 def convert_keys_to_string(dictionary):
     """Recursively converts dictionary keys to strings."""
