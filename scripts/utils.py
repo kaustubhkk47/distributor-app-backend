@@ -6,7 +6,7 @@ import jwt as JsonWebToken
 import datetime
 
 def closeDBConnection():
-    connection.close():
+    connection.close()
 
 def convert_keys_to_string(dictionary):
     """Recursively converts dictionary keys to strings."""

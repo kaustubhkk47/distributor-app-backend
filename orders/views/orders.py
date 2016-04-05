@@ -28,8 +28,8 @@ def get_orders_details(request, tokenPayload):
             "productCount": ordersPtr[i].productCount,
             "totalPrice": ordersPtr[i].totalPrice,
             "editedPrice": ordersPtr[i].editedPrice,
-            "created_at": ordersPtr[i].created_at,
-            "updated_at": ordersPtr[i].updated_at
+            "created_at": time.mktime(ordersPtr[i].created_at.timetuple())*1000,
+            "updated_at": time.mktime(ordersPtr[i].updated_at.timetuple())*1000
         }
         if ordersPtr[i].salesman_id:
             order["salesman"] = {
