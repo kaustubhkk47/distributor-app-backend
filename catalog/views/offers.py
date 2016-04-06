@@ -1,7 +1,7 @@
 from django.views.decorators.csrf import csrf_exempt
-from ..models.offers import Offer
+from ..models.offers import *
 
-from ..serializers.offers import offers_parser
+from ..serializers.offers import offers_parser, orderOffers_parser, productOffers_parser
 
 from scripts.utils import customResponse, convert_keys_to_string, closeDBConnection
 import json
@@ -9,10 +9,15 @@ import json
 def get_offer_details(request, tokenPayload):
     distributorID = tokenPayload['distributorID']
 
-    offers = Offer.objects.filter(distributor__id=distributorID)
+    orderOffers = OrderOffer.objects.filter(distributor__id=distributorID)
+    productOffers = ProductOffer.objects.filter(product__distributor__id=distributorID)
 
+    response = {
+        "orderOffers": orderOffers_parser(orderOffers),
+        "productOffers": productOffers_parser(productOffers)
+    }
     closeDBConnection()
-    return customResponse("2XX", {"offers": offers_parser(offers)})
+    return customResponse("2XX", {"offers": response})
 
 @csrf_exempt
 def add_new_offer(request, tokenPayload):
