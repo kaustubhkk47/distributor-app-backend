@@ -20,7 +20,7 @@ from django.conf.urls.static import static
 
 from urlHandlers.login import distributor_login, salesman_login
 from urlHandlers.user_details import retailer_details, salesman_details
-from urlHandlers.catalog_details import get_offers, get_products
+from urlHandlers.catalog_details import get_offers, get_products, get_offer_types
 from urlHandlers.order_details import order_details
 from urlHandlers.tracking_details import tracking_details
 
@@ -42,6 +42,7 @@ urlpatterns += [
 ## catalog related
 urlpatterns += [
     url(r'^offers/$', get_offers),
+    url(r'^offers/offer-types/$', get_offer_types),
     url(r'^products/$', get_products)
 ]
 

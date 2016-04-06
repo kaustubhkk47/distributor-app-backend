@@ -40,3 +40,14 @@ def get_products(request):
         return delete_product(request, tokenPayload)
     else:
         return customResponse("4XX", {"error": "invalid method"})
+
+def get_offer_types(request):
+    tokenPayload = get_token_payload(request.GET.get("access_token", ""), "distributorID")
+
+    if not len(tokenPayload):
+        return customResponse("4XX", {"error": "Invalid Token"})
+
+    if request.method == "GET":
+        return get_offer_types_details(request, tokenPayload)
+    else:
+        return customResponse("4XX", {"error": "invalid method"})

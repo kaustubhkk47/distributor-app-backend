@@ -19,6 +19,21 @@ def get_offer_details(request, tokenPayload):
     closeDBConnection()
     return customResponse("2XX", {"offers": response})
 
+def get_offer_types_details(request, tokenPayload):
+    distributorID = tokenPayload['distributorID']
+
+    offerTypes = OfferType.objects.all()
+
+    response = []
+    for i in range(len(offerTypes)):
+        response.append({
+            "offerTypeID": offerTypes[i].id,
+            "offerTypeName": offerTypes[i].name,
+        })
+
+    closeDBConnection()
+    return customResponse("2XX", {"offerTypes": response})
+
 @csrf_exempt
 def add_new_offer(request, tokenPayload):
     distributorID = tokenPayload["distributorID"]
