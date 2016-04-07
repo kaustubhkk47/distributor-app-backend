@@ -22,6 +22,7 @@ def offers_parser(offerQuerySet):
 
 def serialize_orderOffer(orderOfferItem):
     orderOffer = {
+        "orderOfferID": orderOfferItem.id,
         "distributorID": orderOfferItem.distributor_id,
         "discount": orderOfferItem.discount,
         "name": orderOfferItem.name,
@@ -40,6 +41,7 @@ def orderOffers_parser(orderOffersQuerySet):
 
 def serialize_productOffer(productOfferItem):
     productOffer = {
+        "productOfferID": productOfferItem.id,
         "productID": productOfferItem.product_id,
         "offerType": {
             "offerTypeID": productOfferItem.offerType.id,
