@@ -43,6 +43,7 @@ def serialize_productOffer(productOfferItem):
     productOffer = {
         "productOfferID": productOfferItem.id,
         "productID": productOfferItem.product_id,
+        "productName": productOfferItem.product.name,
         "offerType": {
             "offerTypeID": productOfferItem.offerType.id,
             "offerTypeName": productOfferItem.offerType.name

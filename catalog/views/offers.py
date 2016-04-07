@@ -35,80 +35,166 @@ def get_offer_types_details(request, tokenPayload):
     return customResponse("2XX", {"offerTypes": response})
 
 @csrf_exempt
-def add_new_offer(request, tokenPayload):
+def post_new_order_offer_details(request, tokenPayload):
     distributorID = tokenPayload["distributorID"]
 
     try:
-        offer = json.loads(request.body.decode("utf-8"))
-        offer = convert_keys_to_string(offer)
+        orderOffer = json.loads(request.body.decode("utf-8"))
+        orderOffer = convert_keys_to_string(orderOffer)
     except Exception as e:
-        return customResponse("4XX", {"error": "Invliad data sent in request"})
+        return customResponse("4XX", {"error": "Invalid data sent in request"})
 
-    if not len(offer) or not 'title' in offer:
+    if not len(orderOffer):
         return customResponse("4XX", {"error": "Invaild data for offer sent"})
-    print offer
+
     try:
-        newOffer = Offer.objects.create(distributor_id=distributorID, title=offer['title'])
+        newOrderOffer = OrderOffer.objects.create(distributor_id=distributorID, name=orderOffer['name'], discount=orderOffer["discount"])
 
     except Exception as e:
         closeDBConnection()
         return customResponse("4XX", {"error": "unable to create entry in db"})
 
     closeDBConnection()
-    return customResponse("2XX", {"offers": offers_parser([newOffer])})
+    return customResponse("2XX", {"orderOffer": orderOffers_parser([newOrderOffer])})
 
 @csrf_exempt
-def delete_offer(request, tokenPayload):
+def delete_order_offer_details(request, tokenPayload):
     distributorID = tokenPayload['distributorID']
 
     try:
-        offer = json.loads(request.body.decode("utf-8"))
-        offer = convert_keys_to_string(offer)
+        orderOffer = json.loads(request.body.decode("utf-8"))
+        orderOffer = convert_keys_to_string(orderOffer)
     except Exception as e:
-        return customResponse("4XX", {"error": "Invliad data sent in request"})
+        return customResponse("4XX", {"error": "Invalid data sent in request"})
 
-    if not 'offerID' in offer:
+    if not 'orderOfferID' in orderOffer:
         return customResponse("4XX", {"error": "Invaild data for offer sent"})
 
     try:
-        offerPtr = Offer.objects.get(id=int(offer["offerID"]))
-    except Offer.DoesNotExist:
+        orderOfferPtr = OrderOffer.objects.get(id=int(orderOffer["orderOfferID"]))
+    except OrderOffer.DoesNotExist:
         closeDBConnection()
         return customResponse("4XX", {"error": "No such Offer exists"})
 
-    if offerPtr.distributor_id != distributorID:
+    if orderOfferPtr.distributor_id != distributorID:
         return customResponse("4XX", {"error": "different distributor"})
 
-    offerPtr.delete()
+    orderOfferPtr.delete()
     closeDBConnection()
-    return customResponse("2XX", {"offers": offers_parser([offerPtr])})
+    return customResponse("2XX", {"orderOffer": orderOffers_parser([orderOfferPtr])})
 
 @csrf_exempt
-def update_offer(request, tokenPayload):
+def update_order_offer_details(request, tokenPayload):
     distributorID = tokenPayload['distributorID']
 
     try:
-        offer = json.loads(request.body.decode("utf-8"))
-        offer = convert_keys_to_string(offer)
+        orderOffer = json.loads(request.body.decode("utf-8"))
+        orderOffer = convert_keys_to_string(orderOffer)
     except Exception as e:
-        return customResponse("4XX", {"error": "Invliad data sent in request"})
+        return customResponse("4XX", {"error": "Invalid data sent in request"})
 
-    if not len(offer) or not 'title' in offer or not 'offerID' in offer:
+    if not len(orderOffer):
         return customResponse("4XX", {"error": "Invaild data for offer sent"})
 
-    offerPtr = Offer.objects.filter(id=offer["offerID"], distributor__id=distributorID)
-    if len(offerPtr) == 0:
+    orderOfferPtr = OrderOffer.objects.filter(id=orderOffer["orderOfferID"], distributor__id=distributorID)
+    if len(orderOfferPtr) == 0:
         closeDBConnection()
         return customResponse("4XX", {"error": "No such offer exists"})
 
-    offerPtr = offerPtr[0]
+    orderOfferPtr = orderOfferPtr[0]
 
     try:
-        offerPtr.title = offer['title']
-        offerPtr.save()
+        orderOfferPtr.name = orderOffer['name']
+        orderOfferPtr.discount = orderOffer['discount']
+
+        orderOfferPtr.save()
         closeDBConnection()
     except Exception as e:
         closeDBConnection()
         return customResponse("4XX", {"error": "could not update"})
     else:
-        return customResponse("2XX", {"offer": offers_parser([offerPtr])})
+        return customResponse("2XX", {"offer": orderOffers_parser([orderOfferPtr])})
+
+@csrf_exempt
+def post_new_product_offer_details(request, tokenPayload):
+    distributorID = tokenPayload['distributorID']
+
+    try:
+        productOffer = json.loads(request.body.decode("utf-8"))
+        productOffer = convert_keys_to_string(productOffer)
+    except Exception as e:
+        return customResponse("4XX", {"error": "Invalid data sent in request"})
+
+    if not len(productOffer):
+        return customResponse("4XX", {"error": "Invaild data for product offer sent"})
+
+    productOffer["description"] = json.dumps(convert_keys_to_string(productOffer["description"]))
+    try:
+        productOfferPtr = ProductOffer.objects.create(product_id=productOffer['productID'], offerType_id=productOffer['offerType'], description=productOffer['description'])
+    except Exception as e:
+        closeDBConnection()
+        return customResponse("4XX", {"error": "unable to create entry in db"})
+
+    closeDBConnection()
+    return customResponse("2XX", {"productOffer": productOffers_parser([productOfferPtr])})
+
+@csrf_exempt
+def update_product_offer_details(request, tokenPayload):
+    distributorID = tokenPayload['distributorID']
+
+    try:
+        productOffer = json.loads(request.body.decode("utf-8"))
+        productOffer = convert_keys_to_string(productOffer)
+    except Exception as e:
+        return customResponse("4XX", {"error": "Invalid data sent in request"})
+
+    if not len(productOffer):
+        return customResponse("4XX", {"error": "Invaild data for product offer sent"})
+
+    productOffer["description"] = json.dumps(convert_keys_to_string(productOffer["description"]))
+
+    productOfferPtr = ProductOffer.objects.filter(id=productOffer["productOfferID"], product__distributor__id=distributorID)
+
+    if not len(productOfferPtr):
+        return customResponse("4XX", {"error": "No such offer exists"})
+
+    productOfferPtr = productOfferPtr[0]
+    try:
+        productOfferPtr.description = convert_keys_to_string(productOffer["description"])
+        productOfferPtr.save()
+    except Exception as e:
+        closeDBConnection()
+        return customResponse("4XX", {"error": "unable to create entry in db"})
+
+    closeDBConnection()
+    return customResponse("2XX", {"productOffer": productOffers_parser([productOfferPtr])})
+
+@csrf_exempt
+def delete_product_offer_details(request, tokenPayload):
+    distributorID = tokenPayload['distributorID']
+
+    try:
+        productOffer = json.loads(request.body.decode("utf-8"))
+        productOffer = convert_keys_to_string(productOffer)
+    except Exception as e:
+        return customResponse("4XX", {"error": "Invalid data sent in request"})
+
+    if not len(productOffer):
+        return customResponse("4XX", {"error": "Invaild data for product offer sent"})
+
+    productOffer["description"] = json.dumps(convert_keys_to_string(productOffer["description"]))
+
+    productOfferPtr = ProductOffer.objects.filter(id=productOffer["productOfferID"], product__distributor__id=distributorID)
+
+    if not len(productOfferPtr):
+        return customResponse("4XX", {"error": "No such offer exists"})
+
+    productOfferPtr = productOfferPtr[0]
+    try:
+        productOfferPtr.delete()
+    except Exception as e:
+        closeDBConnection()
+        return customResponse("4XX", {"error": "unable to create entry in db"})
+
+    closeDBConnection()
+    return customResponse("2XX", {"productOffer": productOffers_parser([productOfferPtr])})

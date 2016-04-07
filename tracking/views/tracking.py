@@ -39,8 +39,7 @@ def post_new_tracking_details(request, tokenPayload):
             convert_keys_to_string(tracking['latlngs'][i])
 
     except Exception as e:
-        print e
-        return customResponse("4XX", {"error": "Invliad data sent in request"})
+        return customResponse("4XX", {"error": "Invalid data sent in request"})
 
     if not len(tracking) or not 'latlngs' in tracking or not tracking['latlngs']:
         return customResponse("4XX", {"error": "Invaild data for tracking sent"})
@@ -51,10 +50,8 @@ def post_new_tracking_details(request, tokenPayload):
     try:
         newTracking = Tracking.objects.create(salesman_id=salesmanID, latlngs=json.dumps(tracking['latlngs']))
     except Exception as e:
-        print e
         closeDBConnection()
         return customResponse("4XX", {"error": "unable to create entry in db"})
 
-    print newTracking
     closeDBConnection()
     return customResponse("2XX", {"tracking": json_response([newTracking])})

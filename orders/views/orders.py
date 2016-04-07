@@ -17,7 +17,6 @@ def get_orders_details(request, tokenPayload):
     orders = []
     ordersPtr = Order.objects.filter(distributor__id=distributorID).select_related()
     for i in range(len(ordersPtr)):
-        print ordersPtr[i].retailer_id
         order = {
             "orderID": ordersPtr[i].id,
             "distributorID": ordersPtr[i].distributor_id,
@@ -81,12 +80,10 @@ def post_order_details(request, tokenPayload):
         if len(orders) == 0:
             return customResponse("4XX", {"error": "no orders"})
     except Exception as e:
-        print e
         errorMessage = {
             "message": "Invalid data sent in request",
         }
         return customResponse("4XX", errorMessage)
-    print orders
 
     responseOrderIDs = []
     for i in range(len(orders)):
@@ -99,7 +96,6 @@ def post_order_details(request, tokenPayload):
         try:
             orderPtr = Order.objects.create(distributor_id=distributorID, salesman_id=salesmanID, retailer_id=retailerID, totalPrice=totalPrice, editedPrice=editedPrice, productCount=productCount)
         except Exception as e:
-            print e
             closeDBConnection()
             return customResponse("4XX", {"error": "unable to create order entry"})
 
@@ -116,7 +112,6 @@ def post_order_details(request, tokenPayload):
             try:
                 OrderItem.objects.create(order_id=orderPtr.id, product_id=products[i]['productID'], quantity=products[i]['quantity'])
             except Exception as e:
-                print e
                 return customResponse("4XX", {"error": products[i]})
         #orderItems = OrderItem.objects.bulk_create(orderItemEntries)
     closeDBConnection()

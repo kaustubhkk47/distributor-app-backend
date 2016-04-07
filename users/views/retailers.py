@@ -55,8 +55,8 @@ def post_new_retailer(request, tokenPayload):
         retailer = json.loads(request.body.decode("utf-8"))
         retailer = convert_keys_to_string(retailer)
     except Exception as e:
-        return customResponse("4XX", {"error": "Invliad data sent in request"})
-    print retailer
+        return customResponse("4XX", {"error": "Invalid data sent in request"})
+
     if not len(retailer) or not validateRetailerData(retailer):
         return customResponse("4XX", {"error": "Invaild data for retailer sent"})
 
@@ -85,9 +85,8 @@ def update_retailer(request, tokenPayload):
         retailer = json.loads(request.body.decode("utf-8"))
         retailer = convert_keys_to_string(retailer)
     except Exception as e:
-        return customResponse("4XX", {"error": "Invliad data sent in request"})
+        return customResponse("4XX", {"error": "Invalid data sent in request"})
 
-    print retailer
     if not len(retailer) or not validateRetailerData(retailer):
         return customResponse("4XX", {"error": "Invaild data for retailer sent"})
 
@@ -100,8 +99,6 @@ def update_retailer(request, tokenPayload):
         retailer['longitude'] = retailerPtr.longitude
 
     try:
-        #pincode = Pincode.objects.get(pincode=retailer['pincode'])
-
         retailerPtr.mobile_number = retailer['mobile_number']
         retailerPtr.company_name = retailer['company_name']
         retailerPtr.name = retailer['name']
@@ -114,10 +111,7 @@ def update_retailer(request, tokenPayload):
 
         retailerPtr.save()
 
-        print retailerPtr
-
     except Exception as e:
-        print e
         closeDBConnection()
         return customResponse("4XX", {"error": "could not update"})
     else:
@@ -132,9 +126,8 @@ def delete_retailer(request, tokenPayload):
         retailer = json.loads(request.body.decode("utf-8"))
         retailer = convert_keys_to_string(retailer)
     except Exception as e:
-        return customResponse("4XX", {"error": "Invliad data sent in request"})
+        return customResponse("4XX", {"error": "Invalid data sent in request"})
 
-    print retailer
     if not 'retailerID' in retailer:
         return customResponse("4XX", {"error": "Invaild data for retailer sent"})
 
