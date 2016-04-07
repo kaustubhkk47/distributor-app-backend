@@ -2,7 +2,6 @@ import time
 from scripts.utils import get_image_url
 
 def serialize_order(orderItem):
-    print orderItem
     order = {
         "orderID": orderItem.order_id,
     }

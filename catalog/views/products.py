@@ -39,7 +39,6 @@ def post_new_product(request, tokenPayload):
     try:
         newProduct = Product.objects.create(distributor_id=distributorID, name=product['name'], price_per_unit=product['price_per_unit'])
     except Exception as e:
-        print e
         closeDBConnection()
         return customResponse("4XX", {"error": "unable to create entry in db"})
     else:
@@ -54,9 +53,7 @@ def update_product_details(request, tokenPayload):
         product = json.loads(request.body.decode("utf-8"))
         product = convert_keys_to_string(product)
     except Exception as ex:
-        return customResponse("4XX", {"error": "Invliad data sent in request"})
-
-    print product
+        return customResponse("4XX", {"error": "Invalid data sent in request"})
 
     if 'productID' not in product:
         return customResponse("4XX", {"error": "productID not present"})
@@ -72,7 +69,6 @@ def update_product_details(request, tokenPayload):
         productPtr.save()
 
     except Exception as e:
-        print e
         closeDBConnection()
         return customResponse("4XX", {"error": "could not update"})
     else:
@@ -87,9 +83,8 @@ def delete_product(request, tokenPayload):
         product = json.loads(request.body.decode("utf-8"))
         product = convert_keys_to_string(product)
     except Exception as e:
-        return customResponse("4XX", {"error": "Invliad data sent in request"})
+        return customResponse("4XX", {"error": "Invalid data sent in request"})
 
-    print product
     if not 'productID' in product:
         return customResponse("4XX", {"error": "Invaild data for product sent"})
 

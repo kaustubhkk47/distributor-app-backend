@@ -36,7 +36,7 @@ def post_new_salesman(request, tokenPayload):
         salesman = convert_keys_to_string(salesman)
     except Exception as e:
         print e
-        return customResponse("4XX", {"error": "Invliad data sent in request"})
+        return customResponse("4XX", {"error": "Invalid data sent in request"})
 
     if not len(salesman) or not 'mobile_number' in salesman or not salesman['mobile_number'] or not 'password' in salesman or not salesman['password']:
         return customResponse("4XX", {"error": "Invaild data for salesman sent"})
@@ -62,7 +62,7 @@ def update_salesman(request, tokenPayload):
         salesman = json.loads(request.body.decode("utf-8"))
         retailer = convert_keys_to_string(salesman)
     except Exception as e:
-        return customResponse("4XX", {"error": "Invliad data sent in request"})
+        return customResponse("4XX", {"error": "Invalid data sent in request"})
 
     print salesman
     if not len(salesman) or not 'mobile_number' in salesman or not salesman['mobile_number'] or not 'password' in salesman or not salesman['password']:
@@ -97,7 +97,7 @@ def delete_salesman(request, tokenPayload):
         salesman = json.loads(request.body.decode("utf-8"))
         salesman = convert_keys_to_string(salesman)
     except Exception as e:
-        return customResponse("4XX", {"error": "Invliad data sent in request"})
+        return customResponse("4XX", {"error": "Invalid data sent in request"})
 
     print salesman
     if not 'salesmanID' in salesman:
