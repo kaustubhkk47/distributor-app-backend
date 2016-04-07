@@ -4,6 +4,7 @@ from django.conf import settings
 
 from users.models.distributors import Distributor
 from users.models.salesman import Salesman
+from users.serializers.distributors import serialize_distributor
 from scripts.utils import get_token_expiration
 from scripts.utils import customResponse
 
@@ -33,7 +34,11 @@ def distributor_login(request):
             }
 
             encoded = JsonWebToken.encode(tokenPayload, settings.SECRET_KEY, algorithm='HS256')
-            return customResponse("2XX", {"token": encoded.decode("utf-8")})
+            response = {
+                "token": encoded.decode("utf-8"),
+                "distributor": serialize_distributor(distributor)
+            }
+            return customResponse("2XX", response)
         else:
             return customResponse("4XX", {"error": "Invalid distributor credentials"})
 
