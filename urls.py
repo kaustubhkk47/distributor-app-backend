@@ -20,8 +20,9 @@ from django.conf.urls.static import static
 
 from urlHandlers.login import distributor_login, salesman_login
 from urlHandlers.user_details import retailer_details, salesman_details
-from urlHandlers.catalog_details import get_offers, get_products
-#from urlHandlers.orders import add_new_order
+from urlHandlers.catalog_details import get_offers, get_products, get_offer_types, order_offer_details, product_offer_details
+from urlHandlers.order_details import order_details
+from urlHandlers.tracking_details import tracking_details
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
@@ -41,11 +42,20 @@ urlpatterns += [
 ## catalog related
 urlpatterns += [
     url(r'^offers/$', get_offers),
+    url(r'^offers/offer-types/$', get_offer_types),
+    url(r'^offers/order-offer/$', order_offer_details),
+    url(r'^offers/product-offer/$', product_offer_details),
     url(r'^products/$', get_products)
 ]
+
 ## order related
 urlpatterns += [
-    #url(r'newOrder$', add_new_order)
+    url(r'^orders/$', order_details)
+]
+
+##tracking
+urlpatterns += [
+    url(r'^tracking/$', tracking_details)
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -1,14 +1,14 @@
 from django.views.decorators.csrf import csrf_exempt
 
-from django.contrib.auth.hashers import make_password
-
 from ..models.salesman import Salesman
 
 from ..models.distributors import Distributor
 
 from ..serializers.salesman import salesman_parser
 
-from scripts.utils import customResponse,check_mobile_number,check_valid_image
+from scripts.utils import customResponse, check_mobile_number, check_valid_image, convert_keys_to_string, closeDBConnection
+
+import json
 
 def get_salesman_details(tokenPayload, salesmanID=0):
     distributorID = tokenPayload["distributorID"]
@@ -20,6 +20,7 @@ def get_salesman_details(tokenPayload, salesmanID=0):
             salesmen = [salesmen]
         else:
             salesmen = Salesman.objects.filter(distributor__id=distributorID, account_active=True)
+            closeDBConnection()
     except Exception as e:
         return customResponse("4XX", {"error": "No Salesman Found"})
 
@@ -31,39 +32,86 @@ def post_new_salesman(request, tokenPayload):
     distributorID = tokenPayload["distributorID"]
 
     try:
-        # no need to validate,will automatically raise an exception if not found
-        assocDistributor = Distributor.objects.get(id=distributorID)
-        # validating length of mobile number
-        mobileNumber = request.POST.get('mobile_number')
-        if not check_mobile_number(mobileNumber):
-            return customResponse("4XX", {"error": "Invalid mobile number"})
-
-        # no need to validate, will raise a exception if empty
-        firstName = request.POST.get('first_name')
-        lastName = request.POST.get('last_name', '')
-        password = make_password(request.POST.get('password'))
-
-        profilePicture = request.FILES.get('profile_picture', '')
-        if not profilePicture == '' and not check_valid_image(profilePicture.name):
-            return customResponse("4XX",{"error":"Invalid image format"})
-
-        salesman, created = Salesman.objects.get_or_create(mobile_number=mobileNumber,
-                                                           defaults={'first_name': firstName, 'last_name': lastName,
-                                                                     'password': password,
-                                                                     'profile_picture': profilePicture,
-                                                                     'distributor': assocDistributor})
-
-        if created == False:
-            if salesman.distributor.id == distributorID:
-                return customResponse("4XX", {"error": "Salesman  already exist"})
-            elif salesman.account_active == 1:
-                return customResponse("4XX",
-                                      {"error": "Salesman already exists and is associated with another distributor"})
-            else:
-                salesman.distributor = assocDistributor
-                salesman.account_active = 1
-                salesman.save()
-        salesman=[salesman]
-        return customResponse("2XX", {"salesman": salesman_parser(salesman)})
+        salesman = json.loads(request.body.decode("utf-8"))
+        salesman = convert_keys_to_string(salesman)
     except Exception as e:
-        return customResponse("4XX", {"error": "Invalid request"})
+        print e
+        return customResponse("4XX", {"error": "Invalid data sent in request"})
+
+    if not len(salesman) or not 'mobile_number' in salesman or not salesman['mobile_number'] or not 'password' in salesman or not salesman['password']:
+        return customResponse("4XX", {"error": "Invaild data for salesman sent"})
+
+    if Salesman.objects.filter(distributor__id=distributorID, mobile_number=salesman['mobile_number']).exists():
+        return customResponse("4XX", {"error": "Salesman already exist"})
+
+    try:
+        newSalesman = Salesman.objects.create(distributor_id=distributorID, mobile_number=salesman['mobile_number'], name=salesman['name'], password=salesman['password'])
+    except Exception as e:
+        print e
+        closeDBConnection()
+        return customResponse("4XX", {"error": "unable to create entry in db"})
+
+    return customResponse("2XX", {"salesmen": salesman_parser([newSalesman])})
+
+
+@csrf_exempt
+def update_salesman(request, tokenPayload):
+    distributorID = tokenPayload['distributorID']
+
+    try:
+        salesman = json.loads(request.body.decode("utf-8"))
+        retailer = convert_keys_to_string(salesman)
+    except Exception as e:
+        return customResponse("4XX", {"error": "Invalid data sent in request"})
+
+    print salesman
+    if not len(salesman) or not 'mobile_number' in salesman or not salesman['mobile_number'] or not 'password' in salesman or not salesman['password']:
+        return customResponse("4XX", {"error": "Invaild data for salesman sent"})
+
+    salesmanPtr = Salesman.objects.filter(id=int(salesman["salesmanID"]), distributor__id=distributorID)
+    salesmanPtr = salesmanPtr[0]
+
+    try:
+
+        salesmanPtr.mobile_number = salesman['mobile_number']
+        salesmanPtr.name = salesman['name']
+        salesmanPtr.password = salesman['password']
+
+        salesmanPtr.save()
+
+        print salesmanPtr
+
+    except Exception as e:
+        print e
+        closeDBConnection()
+        return customResponse("4XX", {"error": "could not update"})
+    else:
+        closeDBConnection()
+        return customResponse("2XX", {"retailer": salesman_parser([salesmanPtr])})
+
+@csrf_exempt
+def delete_salesman(request, tokenPayload):
+    distributorID = tokenPayload['distributorID']
+
+    try:
+        salesman = json.loads(request.body.decode("utf-8"))
+        salesman = convert_keys_to_string(salesman)
+    except Exception as e:
+        return customResponse("4XX", {"error": "Invalid data sent in request"})
+
+    print salesman
+    if not 'salesmanID' in salesman:
+        return customResponse("4XX", {"error": "Invaild data for salesman sent"})
+
+    try:
+        salesmanPtr = Salesman.objects.get(id=int(salesman["salesmanID"]))
+    except Salesman.DoesNotExist:
+        closeDBConnection()
+        return customResponse("4XX", {"error": "No such retailer exists"})
+
+    if salesmanPtr.distributor_id != distributorID:
+        return customResponse("4XX", {"error": "different distributor"})
+
+    salesmanPtr.delete()
+    closeDBConnection()
+    return customResponse("2XX", {"retailer": salesman_parser([salesmanPtr])})

@@ -4,6 +4,7 @@ from django.conf import settings
 
 from users.models.distributors import Distributor
 from users.models.salesman import Salesman
+from users.serializers.distributors import serialize_distributor
 from scripts.utils import get_token_expiration
 from scripts.utils import customResponse
 
@@ -26,16 +27,18 @@ def distributor_login(request):
         except Distributor.DoesNotExist:
             return customResponse("4XX", {"error": "Invalid distributor credentials"})
 
-        if check_password(password, distributor.password):
+        if password == distributor.password:
             tokenPayload = {
                 "user": "distributor",
                 "distributorID": distributor.id,
-                "exp": get_token_expiration()
             }
 
             encoded = JsonWebToken.encode(tokenPayload, settings.SECRET_KEY, algorithm='HS256')
-            return customResponse("2XX", {"token": encoded.decode("utf-8")})
-
+            response = {
+                "token": encoded.decode("utf-8"),
+                "distributor": serialize_distributor(distributor)
+            }
+            return customResponse("2XX", response)
         else:
             return customResponse("4XX", {"error": "Invalid distributor credentials"})
 
@@ -59,10 +62,9 @@ def salesman_login(request):
         tokenPayload = {
             "user": "salesman",
             "distributorID": salesman.distributor.id,
-            "salesmanID": salesman.id,
-            "exp": get_token_expiration()
+            "salesmanID": salesman.id
         }
-        if check_password(password, salesman.password):
+        if password == salesman.password:
             encoded = JsonWebToken.encode(tokenPayload, settings.SECRET_KEY, algorithm='HS256')
             return customResponse("2XX", {"token": encoded.decode("utf-8")})
         else:

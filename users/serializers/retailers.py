@@ -11,12 +11,12 @@ def serialize_retailer(retailerItem):
         "profile_picture": get_image_url(retailerItem.profile_picture),
         "address_line_1": retailerItem.address_line_1,
         "address_line_2": retailerItem.address_line_2,
-        "pincode": retailerItem.pincode.pincode,
+        "pincode": retailerItem.pincode,
         "latitude": retailerItem.latitude,
         "longitude": retailerItem.longitude,
         "landmark": retailerItem.landmark,
-        "created_at": time.mktime(retailerItem.created_at.timetuple()),
-        "updated_at": time.mktime(retailerItem.updated_at.timetuple())
+        "created_at": time.mktime(retailerItem.created_at.timetuple())*1000,
+        "updated_at": time.mktime(retailerItem.updated_at.timetuple())*1000
     }
     return retialer
 

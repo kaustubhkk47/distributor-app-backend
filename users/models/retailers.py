@@ -22,7 +22,7 @@ class Retailer(models.Model):
     latitude = models.DecimalField(max_digits=8, decimal_places=4, blank=True, null=True)
     longitude = models.DecimalField(max_digits=8, decimal_places=4, blank=True, null=True)
 
-    pincode = models.ForeignKey(Pincode)
+    pincode = models.CharField(max_length=6, blank=True, null=False)
 
     account_active = models.BooleanField(default=1)
 
@@ -38,6 +38,5 @@ class Retailer(models.Model):
             address += ", " + self.address_line_2
         if self.landmark:
             address += ", " + self.landmark
-        if self.pincode:
-            address += ", " + self.pincode.city.name + ", " + self.pincode.city.state.name + ", " + self.pincode.pincode
+        
         return address
